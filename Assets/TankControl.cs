@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TankControl : MonoBehaviour
 {
-  public int PlayerNumber = 1;
   public float Speed = 12f;
   public float TurnSpeed = 180f;
   public TextMeshProUGUI CountText;
@@ -20,12 +19,11 @@ public class TankControl : MonoBehaviour
   private float CurrentHealth;
   private int DirtCount = 0;
 
-  private float DirtValue = 0.05f;
+  private float DirtHealthValue = 0.05f;
+  private float MovementHealthValue = 0.025f;
 
-  private bool TurnLeft;
-  private bool TurnRight;
-  private bool MoveBack;
-  private bool MoveForward;
+  private string CurrentOrientation = "Up";
+  private Room Room;
 
   private void Awake()
   {
@@ -48,8 +46,6 @@ public class TankControl : MonoBehaviour
 
   private void Start()
   {
-    MovementAxisName = "Vertical" + PlayerNumber;
-    TurnAxisName = "Horizontal" + PlayerNumber;
     MovementInputValue = 1f;
   }
 
@@ -83,21 +79,7 @@ public class TankControl : MonoBehaviour
     {
       other.gameObject.SetActive(false);
       DirtCount++;
-      UpdateHealth(DirtValue);
-    }
-  }
-
-  private void OnCollisionExit(Collision collision)
-  {
-    if (collision.gameObject.CompareTag("Obstacle"))
-    {
-      Debug.Log($"Exiting: {collision.collider.name}");
-
-      (float turnValue, float moveValue) = GetMovementValues();
-      Debug.Log(turnValue);
-      Debug.Log(moveValue);
-
-      Redirect(turnValue, moveValue);
+      UpdateHealth(DirtHealthValue);
     }
   }
 
@@ -130,51 +112,12 @@ public class TankControl : MonoBehaviour
     Turn();
   }
 
-  private (float turnValue, float moveValue) GetMovementValues()
+  // have methods for turning all directions
+  // have methods for updating rotation in all directions
+  // have method for coordinating movement
+  // need fields for current direction (orientation)
+  private void MoveLeft()
   {
-    float turnValue = 0f;
-    float moveValue = 0f;
 
-    Debug.Log($"RIGHT: {TurnRight}");
-    Debug.Log($"BACK: {MoveBack}");
-    Debug.Log($"LEFT: {TurnLeft}");
-    Debug.Log($"FORWARD: {MoveForward}");
-
-    if (TurnLeft)
-      turnValue = 1f;
-    else if (TurnRight)
-      turnValue = -1f;
-
-    if (MoveBack)
-      moveValue = -1f;
-    else if (MoveForward)
-      moveValue = 1f;
-
-    return (turnValue, moveValue);
-  }
-
-  private void FindDirections(bool hitLeft, bool hitRight)
-  {
-    bool turnLeft = false;
-    bool turnRight = false;
-    bool moveBack = false;
-    bool moveForward = false;
-
-    if (hitRight)
-    {
-      turnRight = false;
-      turnLeft = true;
-    }
-
-    if (hitLeft)
-    {
-      turnLeft = false;
-      turnRight = true;
-    }
-
-    TurnLeft = turnLeft;
-    TurnRight = turnRight;
-    MoveBack = moveBack;
-    MoveForward = moveForward;
   }
 }
