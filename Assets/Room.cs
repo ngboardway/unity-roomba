@@ -28,6 +28,7 @@ public class Room : MonoBehaviour
 
     private int _length = 19;
     private int _width = 19;
+    private int _totalPotential = 0;
 
     public GameObject WallPrefab;
     public GameObject DirtPrefab;
@@ -63,23 +64,25 @@ public class Room : MonoBehaviour
             {
                 case 1:
                     // draw wall
-                    GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    wall.transform.position = position;
-
+                    Instantiate(WallPrefab, position, Quaternion.identity);
                     break;
                 case 2:
+                    _totalPotential++;
+                    Instantiate(TilePrefab, position, Quaternion.identity);
                     Instantiate(DirtPrefab, position, Quaternion.identity);
                     break;
                 case 3:
                     // draw rug
+                    Instantiate(RugPrefab, position, Quaternion.identity);
                     break;
                 case 4:
                     // draw furniture
+                    Instantiate(FurniturePrefab, position, Quaternion.identity);
                     break;
                 default:
                     // draw tile
-                    GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                    tile.transform.position = position;
+                    _totalPotential++;
+                    Instantiate(TilePrefab, position, Quaternion.identity);
                     break;
 
             }

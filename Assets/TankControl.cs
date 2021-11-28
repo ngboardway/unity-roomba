@@ -10,11 +10,6 @@ public class TankControl : MonoBehaviour
   public TextMeshProUGUI CountText;
   public TextMeshProUGUI DirtCountText;
 
-  public BoxCollider TopLeftCollider;
-  public BoxCollider TopRightCollider;
-  //public BoxCollider BottomRightCollider;
-  //public BoxCollider BottomLeftCollider;
-
   private string MovementAxisName;
   private string TurnAxisName;
   private Rigidbody Rigidbody;
@@ -90,10 +85,6 @@ public class TankControl : MonoBehaviour
       DirtCount++;
       UpdateHealth(DirtValue);
     }
-    else if (other.gameObject.CompareTag("Furnishings"))
-    {
-      Debug.Log("REDIRECT");
-    }
   }
 
   private void OnCollisionExit(Collision collision)
@@ -114,17 +105,7 @@ public class TankControl : MonoBehaviour
   {
     if (collision.gameObject.CompareTag("Obstacle"))
     {
-      Debug.Log($"Entering: {collision.collider.name}");
 
-      bool hitLeft = TopLeftCollider.bounds.Intersects(collision.collider.bounds);
-      bool hitRight = TopRightCollider.bounds.Intersects(collision.collider.bounds);
-      //bool hitBottom = BottomRightCollider.bounds.Intersects(collision.collider.bounds);
-      //bool hitLeft = BottomLeftCollider.bounds.Intersects(collision.collider.bounds);
-
-      FindDirections(hitLeft, hitRight);
-      
-      MovementInputValue = -1f;
-      Move();
     }
   }
 
