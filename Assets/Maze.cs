@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapLocation       
+public class MapLocation2       
 {
     public int x;
     public int z;
 
-    public MapLocation(int _x, int _z)
+    public MapLocation2(int _x, int _z)
     {
         x = _x;
         z = _z;
@@ -18,18 +18,18 @@ public class MapLocation
         return new Vector2(x, z);
     }
 
-    public static MapLocation operator +(MapLocation a, MapLocation b)
-       => new MapLocation(a.x + b.x, a.z + b.z);
+    public static MapLocation2 operator +(MapLocation2 a, MapLocation2 b)
+       => new MapLocation2(a.x + b.x, a.z + b.z);
 
 }
 
 public class Maze : MonoBehaviour
 {
-    public List<MapLocation> directions = new List<MapLocation>() {
-                                            new MapLocation(1,0),
-                                            new MapLocation(0,1),
-                                            new MapLocation(-1,0),
-                                            new MapLocation(0,-1) };
+    public List<MapLocation2> directions = new List<MapLocation2>() {
+                                            new MapLocation2(1,0),
+                                            new MapLocation2(0,1),
+                                            new MapLocation2(-1,0),
+                                            new MapLocation2(0,-1) };
     public int width = 30; //x length
     public int depth = 30; //z length
     public byte[,] map;

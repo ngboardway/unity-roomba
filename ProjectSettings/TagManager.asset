@@ -8,6 +8,7 @@ TagManager:
   - Furnishings
   - Obstacle
   - TopLeft
+  - Room
   layers:
   - Default
   - TransparentFX
