@@ -9,6 +9,9 @@ TagManager:
   - Obstacle
   - TopLeft
   - Room
+  - Text - Stuck
+  - Text - Dirt
+  - Text - Health
   layers:
   - Default
   - TransparentFX
