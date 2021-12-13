@@ -9,4 +9,15 @@ Future iterations will examine the effectiveness of various pathing algorithms i
 
 
 ## Running the Roomba
-_coming soon_
+
+If you have never downloaded Unity before start by downloading Unity Hub from [the website](https://unity.com/download) and running through the installer. Follow the instructions to sign in/ activate a license.
+
+Next follow the instructions to install the 2019 LTS release. Future iterations of the project may involve upgrading, but we will keep to this LTS for now. This is notoriously a very finicky process and may take a few tries. At the minimum you will need to install build support for whichever OS you are running (mac vs. windows) and an editor. The installation steps will suggest one, but you can use whatever text editor you would like for writing scripts. 
+
+Once Unity has been installed, make sure the repository has been cloned locally and is accessible. 
+
+Go the project menu and click 'Add'. Navigate to where you cloned the repository and select folder. You may be prompted to update the project if you are using a newer version of Unity than how the project/ assets was built last. Click confirm to allow it to update what it needs.
+
+Once you have opened the project, open the RoombaScene. 
+
+If you have an issue with the reference to TextMeshPro, you may need to close all editors and remove/ re-install the package.
