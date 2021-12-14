@@ -1,5 +1,5 @@
 ## Description
-The Unity Roomba is a 3D simluation of a Roomba moving within a space. There are various obstacles such as furniture and rugs which cause the robot to turn in search of a viable path. There are also walls which keep the robot within a pre-defined area (Room).
+The Unity Roomba is a 3D simulation of a Roomba moving within a space. There are various obstacles such as furniture and rugs which cause the robot to turn in search of a viable path. There are also walls which keep the robot within a pre-defined area (Room).
 
 Throughout the space there are a series of "dirt" particles which can be collected. Both the movement of the robot and its collection of these particles consume battery life, which is displayed throughout the simulation.
 
@@ -21,3 +21,5 @@ Go the project menu and click 'Add'. Navigate to where you cloned the repository
 Once you have opened the project, open the RoombaScene. 
 
 If you have an issue with the reference to TextMeshPro, you may need to close all editors and remove/ re-install the package.
+
+Press play and watch the Roomba fly through the room.
