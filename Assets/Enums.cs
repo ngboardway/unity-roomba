@@ -17,6 +17,12 @@ public enum ObjectType
   Roomba
 }
 
+public enum MovementPatterns
+{
+  Lawnmower,
+  Random
+}
+
 public class TagConstants
 {
   public const string Dirt = "Dirt";

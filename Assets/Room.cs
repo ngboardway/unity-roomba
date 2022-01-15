@@ -9,8 +9,8 @@ public class Room : MonoBehaviour
   private int[,] _layout =
   {
     {-1,-1,-1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,5,1},
     {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,5,0,1},
     {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
     {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
@@ -50,11 +50,21 @@ public class Room : MonoBehaviour
     return ObjectsInRoom.FirstOrDefault(o => o.X == x && o.Z == z);
   }
 
-  public void EndSimulation()
+  public void EndSimulation(string reason)
   {
     double covered = GetPercentCovered();
     string formattedCovered = covered.ToString("N2");
-    EndText.text = $"Out of viable moves.\nVisited {formattedCovered}% of potential tiles.";
+    string reasonText;
+    if (reason == "Time")
+    {
+      reasonText = "Out of time.";
+    }
+    else
+    {
+      reasonText = "Out of viable moves.";
+    }
+
+    EndText.text = $"{reasonText}\nVisited {formattedCovered}% of potential tiles.";
     EndText.gameObject.SetActive(true);
   }
 
@@ -106,7 +116,7 @@ public class Room : MonoBehaviour
         case 2:
           // draw dirt and tile (since the dirt is in the air, want to see the ground beneath it too)
           _totalPotential++;
-          Instantiate(TilePrefab, position, Quaternion.identity);
+          //Instantiate(TilePrefab, position, Quaternion.identity);
           Instantiate(DirtPrefab, position, Quaternion.identity);
           mapLocation.ObjectType = ObjectType.Dirt;
           break;
