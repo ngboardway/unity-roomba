@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using TMPro;
+using AssemblyCSharp.Assets;
 
 public class Room : MonoBehaviour
 {
@@ -116,8 +117,9 @@ public class Room : MonoBehaviour
         case 2:
           // draw dirt and tile (since the dirt is in the air, want to see the ground beneath it too)
           _totalPotential++;
-          //Instantiate(TilePrefab, position, Quaternion.identity);
-          Instantiate(DirtPrefab, position, Quaternion.identity);
+          Instantiate(TilePrefab, position, Quaternion.identity);
+          Vector3 dirtPosition = new Vector3(position.x, 0.25f, position.z);
+          Instantiate(DirtPrefab, dirtPosition, Quaternion.identity);
           mapLocation.ObjectType = ObjectType.Dirt;
           break;
         case 3:
@@ -149,21 +151,5 @@ public class Room : MonoBehaviour
     }
 
     return mapLocation;
-  }
-
-  public class MapLocation
-  {
-    public float X { get; set; }
-    public float Z { get; set; }
-    public bool Visited { get; set; }
-    public ObjectType ObjectType { get; set; }
-    public Vector3 Position { get; set; }
-
-    public MapLocation(float x, float z)
-    {
-      X = x;
-      Z = z;
-      ObjectType = ObjectType.None;
-    }
   }
 }

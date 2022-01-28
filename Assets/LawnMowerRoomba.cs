@@ -7,7 +7,8 @@ namespace AssemblyCSharp
 {
   public class LawnMowerRoomba : Roomba
   {
-    public LawnMowerRoomba(Room room, float speed) : base(room, speed)
+    public LawnMowerRoomba(Room room, float speed)
+      : base(room, speed)
     {
     }
 
@@ -16,21 +17,14 @@ namespace AssemblyCSharp
       MapLocation nextLocation = GetNextLocation(CurrentOrientation);
       if (nextLocation != null)
       {
-        if (nextLocation.ObjectType == ObjectType.Tile || nextLocation.ObjectType == ObjectType.Dirt)
+        if (nextLocation.CanInhabitSpace())
         {
-          if (CurrentOrientation == Orientation.Up)
-            MoveUp(transform);
-          else if (CurrentOrientation == Orientation.Down)
-            MoveDown(transform);
-          else if (CurrentOrientation == Orientation.Left)
-            MoveLeft(transform);
-          else
-            MoveRight(transform);
+          ContinueInCurrent(transform);
         }
         else
         {
           MapLocation locationAfterTurn = GetNextLocation(Orientation.Left);
-          if (locationAfterTurn != null && (locationAfterTurn.ObjectType == ObjectType.Tile || locationAfterTurn.ObjectType == ObjectType.Dirt))
+          if (locationAfterTurn != null && locationAfterTurn.CanInhabitSpace())
           {
             if (CurrentOrientation == Orientation.Up)
             {

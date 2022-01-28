@@ -27,29 +27,22 @@ namespace AssemblyCSharp.Assets
 
     public MoveEndConditions MoveRoomba(Transform transform)
     {
-      if (Room.CurrentLocation.ObjectType == ObjectType.Dirt && Room.CurrentLocation.X != 17)
+      moveCount = 0;
+      if (ShouldMove)
       {
-        ShouldMove = false;
-      }
-      else
-      {
-        moveCount = 0;
-        if (ShouldMove)
-        {
-          if (IsTurning)
-            if (TurnCount > 0)
-            {
-              TurnInDirection();
-              TurnCount--;
-            }
-            else
-            {
-              IsTurning = false;
-            }
+        if (IsTurning)
+          if (TurnCount > 0)
+          {
+            TurnInDirection();
+            TurnCount--;
+          }
           else
           {
-            MoveInDirection(transform);
+            IsTurning = false;
           }
+        else
+        {
+          MoveInDirection(transform);
         }
       }
 
@@ -92,11 +85,11 @@ namespace AssemblyCSharp.Assets
       MapLocation nextLocation = Room.GetObjectForCoordinate(x, z);
       nextLocation.Visited = true;
       Room.CurrentLocation = nextLocation;
-
+      
       transform.position = Vector3.MoveTowards(
              transform.position, Target, Speed);
 
-      Debug.Log($"Position: ({nextLocation.X}, {nextLocation.Z})");
+      Debug.Log($"Goal: ({Target.x}, {Target.z}), Actual: ({transform.position.x}, {transform.position.z})");
     }
 
     protected void MoveLeft(Transform transform)
@@ -165,6 +158,18 @@ namespace AssemblyCSharp.Assets
       }
 
       return Room.GetObjectForCoordinate(nextX, nextZ);
+    }
+
+    protected void ContinueInCurrent(Transform transform)
+    {
+      if (CurrentOrientation == Orientation.Up)
+        MoveUp(transform);
+      else if (CurrentOrientation == Orientation.Down)
+        MoveDown(transform);
+      else if (CurrentOrientation == Orientation.Left)
+        MoveLeft(transform);
+      else
+        MoveRight(transform);
     }
   }
 }

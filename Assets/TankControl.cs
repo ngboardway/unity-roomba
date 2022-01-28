@@ -4,12 +4,13 @@ using AssemblyCSharp.Assets;
 using TMPro;
 using UnityEngine;
 using static Room;
+using Random = UnityEngine.Random;
 
 public class TankControl : MonoBehaviour
 {
-  public float Speed = 12f;
+  public float Speed = 6f;
   public float TurnSpeed = 180f;
-  public float SimulationTime = 215f;
+  public float SimulationTime = 315f;
   public MovementPatterns RoombaPathingType;
 
   public TextMeshProUGUI CountText;
@@ -35,7 +36,13 @@ public class TankControl : MonoBehaviour
 
     if (RoombaPathingType == MovementPatterns.Lawnmower)
       Roomba = new LawnMowerRoomba(Room, Speed);
+    else if (RoombaPathingType == MovementPatterns.Random)
+      Roomba = new RandomRoomba(Room, Speed);
+  }
 
+  private void Start()
+  {
+    Random.InitState(54);
   }
 
   private void OnEnable()

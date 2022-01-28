@@ -1,9 +1,9 @@
 ﻿public enum Orientation
 {
-  Left,
-  Right,
-  Up,
-  Down
+  Left = 1,
+  Right = 2,
+  Up = 3,
+  Down = 4
 }
 
 public enum ObjectType
