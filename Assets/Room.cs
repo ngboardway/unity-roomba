@@ -44,13 +44,25 @@ public class Room : MonoBehaviour
   public GameObject RugPrefab;
   public GameObject RoombaPrefab;
 
-  public MapLocation CurrentLocation;
+  private float CurrentX;
+  private float CurrentZ;
 
   public MapLocation GetObjectForCoordinate(float x, float z)
   {
     return ObjectsInRoom.FirstOrDefault(o => o.X == x && o.Z == z);
   }
 
+  public (float x, float z) GetCurrentLocation()
+  {
+    return (CurrentX, CurrentZ);
+  }
+
+  public void SetCurrentLocation(float x, float z)
+  {
+    CurrentX = x;
+    CurrentZ = z;
+  }
+  
   public void EndSimulation(string reason)
   {
     double covered = GetPercentCovered();
@@ -139,7 +151,8 @@ public class Room : MonoBehaviour
 
           position.y = 0.15f;
           Instantiate(RoombaPrefab, position, Quaternion.identity);
-          CurrentLocation = mapLocation;
+          CurrentX = position.x;
+          CurrentZ = position.z;
           break;
         default:
           // draw tile

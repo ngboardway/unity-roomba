@@ -83,7 +83,9 @@ public class TankControl : MonoBehaviour
 
   private void OnTriggerEnter(Collider other)
   {
-    Debug.Log($"Dirt collected at ({Room.CurrentLocation.X}, {Room.CurrentLocation.Z})");
+    (float x, float z) = Room.GetCurrentLocation();
+
+    Debug.Log($"Dirt collected at ({x}, {z})");
     if (other.gameObject.CompareTag(TagConstants.Dirt))
     {
       other.gameObject.SetActive(false);

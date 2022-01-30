@@ -111,8 +111,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 3
   TurnSpeed: 180
-  SimulationTime: 315
-  RoombaPathingType: 1
+  SimulationTime: 815
+  RoombaPathingType: 0
   CountText: {fileID: 0}
   DirtCountText: {fileID: 0}
 --- !u!54 &-1920815194554454639

@@ -82,9 +82,16 @@ namespace AssemblyCSharp.Assets
     {
       moveCount++;
       Vector3 Target = new Vector3(x, 0, z);
-      MapLocation nextLocation = Room.GetObjectForCoordinate(x, z);
+
+      float roundedX = Mathf.Floor(x);
+      float roundedZ = Mathf.Floor(z);
+
+      MapLocation nextLocation = Room.GetObjectForCoordinate(roundedX, roundedZ);
+      Debug.Log(nextLocation.X);
+      Debug.Log(nextLocation.Z);
+
       nextLocation.Visited = true;
-      Room.CurrentLocation = nextLocation;
+      Room.SetCurrentLocation(x, z);
       
       transform.position = Vector3.MoveTowards(
              transform.position, Target, Speed);
@@ -94,44 +101,39 @@ namespace AssemblyCSharp.Assets
 
     protected void MoveLeft(Transform transform)
     {
-      float x = Room.CurrentLocation.X;
-      float z = Room.CurrentLocation.Z;
-      float newX = x - 1f;
+      (float x, float z) = Room.GetCurrentLocation();
+      float newX = x - 0.5f;
 
       Move(newX, z, transform);
     }
 
     protected void MoveRight(Transform transform)
     {
-      float x = Room.CurrentLocation.X;
-      float z = Room.CurrentLocation.Z;
+      (float x, float z) = Room.GetCurrentLocation();
 
-      float newX = x + 1f;
+      float newX = x + 0.5f;
       Move(newX, z, transform);
     }
 
     protected void MoveUp(Transform transform)
     {
-      float x = Room.CurrentLocation.X;
-      float z = Room.CurrentLocation.Z;
+      (float x, float z) = Room.GetCurrentLocation();
 
-      float newZ = z + 1f;
+      float newZ = z + 0.5f;
       Move(x, newZ, transform);
     }
 
     protected void MoveDown(Transform transform)
     {
-      float x = Room.CurrentLocation.X;
-      float z = Room.CurrentLocation.Z;
+      (float x, float z) = Room.GetCurrentLocation();
 
-      float newZ = z - 1f;
+      float newZ = z - 0.5f;
       Move(x, newZ, transform);
     }
 
     protected MapLocation GetNextLocation(Orientation orientation)
     {
-      float currentX = Room.CurrentLocation.X;
-      float currentZ = Room.CurrentLocation.Z;
+      (float currentX, float currentZ) = Room.GetCurrentLocation();
 
       float nextX;
       float nextZ;
@@ -139,25 +141,27 @@ namespace AssemblyCSharp.Assets
       if (orientation == Orientation.Up)
       {
         nextX = currentX;
-        nextZ = currentZ + 1f;
+        nextZ = currentZ + 0.5f;
       }
       else if (orientation == Orientation.Right)
       {
-        nextX = currentX + 1f;
+        nextX = currentX + 0.5f;
         nextZ = currentZ;
       }
       else if (orientation == Orientation.Down)
       {
         nextX = currentX;
-        nextZ = currentZ - 1f;
+        nextZ = currentZ - 0.5f;
       }
       else
       {
-        nextX = currentX - 1f;
+        nextX = currentX - 0.5f;
         nextZ = currentZ;
       }
 
-      return Room.GetObjectForCoordinate(nextX, nextZ);
+      float roundedX = Mathf.Floor(nextX);
+      float roundedZ = Mathf.Floor(nextZ);
+      return Room.GetObjectForCoordinate(roundedX, roundedZ);
     }
 
     protected void ContinueInCurrent(Transform transform)
