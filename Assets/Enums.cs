@@ -23,6 +23,12 @@ public enum MovementPatterns
   Random
 }
 
+public enum RoomType
+{
+  Preset,
+  RandomGeneration
+}
+
 public class TagConstants
 {
   public const string Dirt = "Dirt";

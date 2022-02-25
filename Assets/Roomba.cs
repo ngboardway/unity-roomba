@@ -6,53 +6,114 @@ namespace AssemblyCSharp.Assets
 {
   public abstract class Roomba
   {
+    protected BoxCollider TopCollider;
+    protected BoxCollider RightCollider;
+    protected BoxCollider BottomCollider;
+    protected BoxCollider LeftCollider;
+
     protected Orientation CurrentOrientation = Orientation.Up;
     protected Orientation TurnOrientation = Orientation.Left;
 
     protected bool IsTurning;
     protected bool ShouldMove = true;
     protected int TurnCount = 0;
-    private float Speed;
+    protected float Speed;
 
-    protected int moveCount = 0;
+    protected int MoveCount = 0;
     protected Room Room;
 
-    public Roomba(Room room, float speed)
+    public Roomba(Room room, float speed,
+      BoxCollider topCollider, BoxCollider rightCollider,
+      BoxCollider bottomCollider, BoxCollider leftCollider)
     {
       Room = room;
       Speed = speed;
+
+      TopCollider = topCollider;
+      RightCollider = rightCollider;
+      BottomCollider = bottomCollider;
+      LeftCollider = leftCollider;
     }
 
-    public abstract void MoveInDirection(Transform transform);
+    public abstract void HandleCollision(Rigidbody rigidbody);
 
-    public MoveEndConditions MoveRoomba(Transform transform)
+    public MoveEndConditions MoveRoomba(Rigidbody rigidbody)
     {
-      moveCount = 0;
+      MoveCount = 0;
       if (ShouldMove)
       {
         if (IsTurning)
-          if (TurnCount > 0)
-          {
-            TurnInDirection();
-            TurnCount--;
-          }
-          else
-          {
-            IsTurning = false;
-          }
+          Turn();
         else
         {
-          MoveInDirection(transform);
+          MoveInDirection(rigidbody);
         }
       }
 
       return new MoveEndConditions
       {
-        MoveCount = moveCount,
+        MoveCount = MoveCount,
         ShouldMove = ShouldMove
       };
 
     }
+
+    public void MoveInDirection(Rigidbody rigidbody)
+    {
+      if (ShouldMove)
+      {
+        MoveCount++;
+        // Adjust the position of the tank based on the player's input.
+        // Scaled by the amount of input it's receiving
+        Vector3 forward = GetForward();
+        Vector3 movement = forward * Speed * Time.fixedDeltaTime;
+        Vector3 newPosition = rigidbody.position + movement;
+
+        rigidbody.MovePosition(newPosition);
+        float x = Mathf.Round(rigidbody.position.x);
+        float z = Mathf.Round(rigidbody.position.z);
+
+        Debug.Log(x + " " + z);
+        if (x < 0 || x > Room.GetRoomWidth() || z < 0 || z > Room.GetRoomLength())
+        {
+          ShouldMove = false;
+        }
+
+        MapLocation location = Room.GetObjectForCoordinate(x, z);
+        if(location != null)
+          location.Visited = true;
+      }
+    }
+
+    private Vector3 GetForward()
+    {
+      float x;
+      float z;
+
+      if (CurrentOrientation == Orientation.Left)
+      {
+        x = -2f;
+        z = 0f;
+      }
+      else if (CurrentOrientation == Orientation.Down)
+      {
+        x = 0f;
+        z = -2f;
+      }
+      else if (CurrentOrientation == Orientation.Right)
+      {
+        x = 2f;
+        z = 0f;
+      }
+      else
+      {
+        x = 0f;
+        z = 2f;
+      }
+
+      return new Vector3(x, 0f, z);
+    }
+
 
     protected void TurnInDirection()
     {
@@ -78,102 +139,49 @@ namespace AssemblyCSharp.Assets
       }
     }
 
-    protected void Move(float x, float z, Transform transform)
+
+
+    public void Turn()
     {
-      moveCount++;
-      Vector3 Target = new Vector3(x, 0, z);
-
-      float roundedX = Mathf.Floor(x);
-      float roundedZ = Mathf.Floor(z);
-
-      MapLocation nextLocation = Room.GetObjectForCoordinate(roundedX, roundedZ);
-      Debug.Log(nextLocation.X);
-      Debug.Log(nextLocation.Z);
-
-      nextLocation.Visited = true;
-      Room.SetCurrentLocation(x, z);
-      
-      transform.position = Vector3.MoveTowards(
-             transform.position, Target, Speed);
-
-      Debug.Log($"Goal: ({Target.x}, {Target.z}), Actual: ({transform.position.x}, {transform.position.z})");
-    }
-
-    protected void MoveLeft(Transform transform)
-    {
-      (float x, float z) = Room.GetCurrentLocation();
-      float newX = x - 0.5f;
-
-      Move(newX, z, transform);
-    }
-
-    protected void MoveRight(Transform transform)
-    {
-      (float x, float z) = Room.GetCurrentLocation();
-
-      float newX = x + 0.5f;
-      Move(newX, z, transform);
-    }
-
-    protected void MoveUp(Transform transform)
-    {
-      (float x, float z) = Room.GetCurrentLocation();
-
-      float newZ = z + 0.5f;
-      Move(x, newZ, transform);
-    }
-
-    protected void MoveDown(Transform transform)
-    {
-      (float x, float z) = Room.GetCurrentLocation();
-
-      float newZ = z - 0.5f;
-      Move(x, newZ, transform);
-    }
-
-    protected MapLocation GetNextLocation(Orientation orientation)
-    {
-      (float currentX, float currentZ) = Room.GetCurrentLocation();
-
-      float nextX;
-      float nextZ;
-
-      if (orientation == Orientation.Up)
+      if (IsTurning)
       {
-        nextX = currentX;
-        nextZ = currentZ + 0.5f;
+        if (TurnCount > 0)
+        {
+          TurnInDirection();
+          TurnCount--;
+        }
+        else
+        {
+          IsTurning = false;
+          ShouldMove = true;
+        }
       }
-      else if (orientation == Orientation.Right)
-      {
-        nextX = currentX + 0.5f;
-        nextZ = currentZ;
-      }
-      else if (orientation == Orientation.Down)
-      {
-        nextX = currentX;
-        nextZ = currentZ - 0.5f;
-      }
-      else
-      {
-        nextX = currentX - 0.5f;
-        nextZ = currentZ;
-      }
-
-      float roundedX = Mathf.Floor(nextX);
-      float roundedZ = Mathf.Floor(nextZ);
-      return Room.GetObjectForCoordinate(roundedX, roundedZ);
     }
 
-    protected void ContinueInCurrent(Transform transform)
+    public void HandleCollision(Collision collision, Rigidbody rb)
     {
+      bool handleCollision;
       if (CurrentOrientation == Orientation.Up)
-        MoveUp(transform);
+      {
+        handleCollision = collision.collider.bounds.Intersects(TopCollider.bounds);
+      }
+      else if (CurrentOrientation == Orientation.Right)
+      {
+        handleCollision = collision.collider.bounds.Intersects(RightCollider.bounds);
+      }
       else if (CurrentOrientation == Orientation.Down)
-        MoveDown(transform);
-      else if (CurrentOrientation == Orientation.Left)
-        MoveLeft(transform);
+      {
+        handleCollision = collision.collider.bounds.Intersects(BottomCollider.bounds);
+      }
       else
-        MoveRight(transform);
+      {
+        handleCollision = collision.collider.bounds.Intersects(LeftCollider.bounds);
+      }
+
+      if (handleCollision)
+      {
+        HandleCollision(rb);
+      }
     }
   }
 }

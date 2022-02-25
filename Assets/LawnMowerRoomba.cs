@@ -7,47 +7,24 @@ namespace AssemblyCSharp
 {
   public class LawnMowerRoomba : Roomba
   {
-    public LawnMowerRoomba(Room room, float speed)
-      : base(room, speed)
+    public LawnMowerRoomba(Room room, float speed,
+      BoxCollider topCollider, BoxCollider rightCollider,
+      BoxCollider bottomCollider, BoxCollider leftCollider)
+      : base(room, speed, topCollider, rightCollider, bottomCollider, leftCollider)
     {
     }
 
-    public override void MoveInDirection(Transform transform)
-    {
-      MapLocation nextLocation = GetNextLocation(CurrentOrientation);
-      if (nextLocation != null)
-      {
-        if (nextLocation.CanInhabitSpace())
-        {
-          ContinueInCurrent(transform);
-        }
-        else
-        {
-          MapLocation locationAfterTurn = GetNextLocation(Orientation.Left);
-          if (locationAfterTurn != null && locationAfterTurn.CanInhabitSpace())
-          {
-            if (CurrentOrientation == Orientation.Up)
-            {
-              MoveLeft(transform);
-              TurnCount = 2;
-              TurnOrientation = Orientation.Left;
-              IsTurning = true;
-            }
 
-            if (CurrentOrientation == Orientation.Down)
-            {
-              MoveLeft(transform);
-              TurnCount = 2;
-              TurnOrientation = Orientation.Right;
-              IsTurning = true;
-            }
-          }
-          else
-          {
-            ShouldMove = false;
-          }
-        }
-      }
+    public override void HandleCollision(Rigidbody rb)
+    {
+      if (CurrentOrientation == Orientation.Up)
+        TurnOrientation = Orientation.Left;
+      else
+        TurnOrientation = Orientation.Right;
+
+      TurnInDirection();
+      MoveInDirection(rb);
+      TurnInDirection();
     }
   }
 }

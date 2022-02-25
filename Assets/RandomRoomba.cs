@@ -7,31 +7,12 @@ namespace AssemblyCSharp.Assets
 {
   public class RandomRoomba : Roomba
   {
-    public RandomRoomba(Room room, float speed)
-      : base(room, speed)
+    public RandomRoomba(Room room, float speed,
+      BoxCollider topCollider, BoxCollider rightCollider,
+      BoxCollider bottomCollider, BoxCollider leftCollider)
+      : base(room, speed, topCollider, rightCollider, bottomCollider, leftCollider)
     {
-      CurrentOrientation = PickDirection();
-    }
-
-
-    public override void MoveInDirection(Transform transform)
-    {
-      MapLocation nextLocation = GetNextLocation(CurrentOrientation);
-      if (nextLocation != null)
-      {
-        if (nextLocation.CanInhabitSpace())
-        {
-          ContinueInCurrent(transform);
-        }
-        else
-        {
-          PickNewDirection();
-        }
-      }
-      else
-      {
-        ShouldMove = false;
-      }
+      CurrentOrientation = Orientation.Up;
     }
 
     public void PickNewDirection()
@@ -43,13 +24,8 @@ namespace AssemblyCSharp.Assets
         Orientation nextOrientation = PickDirection();
         if (nextOrientation != CurrentOrientation)
         {
-          MapLocation nextLocation = GetNextLocation(nextOrientation);
-
-          if (nextLocation != null && nextLocation.CanInhabitSpace())
-          {
-            CurrentOrientation = nextOrientation;
-            hasDirection = true;
-          }
+          CurrentOrientation = nextOrientation;
+          hasDirection = true;
         }
       }
     }
@@ -72,22 +48,10 @@ namespace AssemblyCSharp.Assets
       TurnOrientation = (Orientation)direction;
     }
 
-    public void FindTurnCounts()
+    public override void HandleCollision(Rigidbody rigidbody)
     {
-      // Left: 0
-      // Right: 1
-      // Up: 2
-      // Down: 3
-      if (TurnOrientation == Orientation.Left)
-      {
-        // L D R U
-      }
-      else
-      {
-        // L U R D
-      }
-
-      // If current orientation is left and I need to go right next 
+      PickNewDirection();
+      //MoveRoomba(rigidbody);
     }
   }
 }

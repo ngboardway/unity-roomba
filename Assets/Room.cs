@@ -52,6 +52,9 @@ public class Room : MonoBehaviour
     return ObjectsInRoom.FirstOrDefault(o => o.X == x && o.Z == z);
   }
 
+  public int GetRoomLength() => _length;
+  public int GetRoomWidth() => _width;
+
   public (float x, float z) GetCurrentLocation()
   {
     return (CurrentX, CurrentZ);
@@ -62,7 +65,7 @@ public class Room : MonoBehaviour
     CurrentX = x;
     CurrentZ = z;
   }
-  
+
   public void EndSimulation(string reason)
   {
     double covered = GetPercentCovered();
@@ -91,6 +94,7 @@ public class Room : MonoBehaviour
   {
     ObjectsInRoom = new List<MapLocation>();
     DrawRoom();
+    Debug.Log(_layout[17, 1]);
   }
 
   private double GetPercentCovered()
@@ -153,6 +157,7 @@ public class Room : MonoBehaviour
           Instantiate(RoombaPrefab, position, Quaternion.identity);
           CurrentX = position.x;
           CurrentZ = position.z;
+          mapLocation.ObjectType = ObjectType.Tile;
           break;
         default:
           // draw tile
