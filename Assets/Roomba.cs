@@ -73,14 +73,14 @@ namespace AssemblyCSharp.Assets
         float x = Mathf.Round(rigidbody.position.x);
         float z = Mathf.Round(rigidbody.position.z);
 
-        Debug.Log(x + " " + z);
         if (x < 0 || x > Room.GetRoomWidth() || z < 0 || z > Room.GetRoomLength())
         {
+          Debug.Log("Not valid at (" + x + "," + z + "). " + Room.GetRoomWidth() + " by " + Room.GetRoomLength());
           ShouldMove = false;
         }
 
         MapLocation location = Room.GetObjectForCoordinate(x, z);
-        if(location != null)
+        if (location != null)
           location.Visited = true;
       }
     }
@@ -160,10 +160,15 @@ namespace AssemblyCSharp.Assets
 
     public void HandleCollision(Collision collision, Rigidbody rb)
     {
+      //Debug.Log(collision.collider.bounds + " " + collision.collider.name + " " + CurrentOrientation);
       bool handleCollision;
+
+
       if (CurrentOrientation == Orientation.Up)
       {
-        handleCollision = collision.collider.bounds.Intersects(TopCollider.bounds);
+        Vector3 colliderPosition = new Vector3(collision.transform.position.x, 0, collision.transform.position.z + 0.5f);
+        Bounds colliderBounds = new Bounds(colliderPosition, collision.collider.bounds.size);
+        handleCollision = colliderBounds.Intersects(TopCollider.bounds);
       }
       else if (CurrentOrientation == Orientation.Right)
       {

@@ -904,6 +904,9 @@ MonoBehaviour:
     type: 3}
   RoombaPrefab: {fileID: 6729520826550929472, guid: 9c26dba7aac6143fd82548c7950456d4,
     type: 3}
+  RoomType: 0
+  Length: 10
+  Width: 10
 --- !u!4 &2072872131
 Transform:
   m_ObjectHideFlags: 0

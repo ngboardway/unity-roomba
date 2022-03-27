@@ -37,4 +37,5 @@ public class TagConstants
   public const string TextEnd = "Text - Stuck";
   public const string Obstacle = "Obstacle";
   public const string Room = "Room";
+  public const string InnerObstacle = "InnerObstacle";
 }

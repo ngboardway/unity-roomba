@@ -403,7 +403,7 @@ Transform:
   m_GameObject: {fileID: 6729520826550929472}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.376924, y: 0.1, z: 7.170372}
-  m_LocalScale: {x: 1, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.85, y: 0.25, z: 0.85}
   m_Children:
   - {fileID: 859449298}
   - {fileID: 1333623668}
@@ -487,7 +487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 12
   TurnSpeed: 180
-  SimulationTime: 515
+  SimulationTime: 1500
   RoombaPathingType: 1
   TopCollider: {fileID: 73773412}
   RightCollider: {fileID: 859449299}

@@ -4,38 +4,16 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 using AssemblyCSharp.Assets;
+using System.Text;
+using System.IO;
+using UnityEngine.UI;
 
 public class Room : MonoBehaviour
 {
-  private int[,] _layout =
-  {
-    {-1,-1,-1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,5,1},
-    {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {-1,-1,-1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,4,4,4,4,4,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,0,0,0,0,0,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,0,0,0,0,0,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,0,0,0,0,0,0,0,1},
-    {-1,-1,-1,-1,1,0,0,3,3,0,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,0,0,3,3,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-  };
-
-
-  private int _length = 19;
-  private int _width = 19;
   private int _totalPotential = 0;
   private List<MapLocation> ObjectsInRoom;
   private TextMeshProUGUI EndText;
+  private string FileName = "Room3.txt";
 
   public GameObject WallPrefab;
   public GameObject DirtPrefab;
@@ -44,16 +22,21 @@ public class Room : MonoBehaviour
   public GameObject RugPrefab;
   public GameObject RoombaPrefab;
 
+  public RoomType RoomType;
+  public int Length = 19;
+  public int Width = 19;
+
   private float CurrentX;
   private float CurrentZ;
+
 
   public MapLocation GetObjectForCoordinate(float x, float z)
   {
     return ObjectsInRoom.FirstOrDefault(o => o.X == x && o.Z == z);
   }
 
-  public int GetRoomLength() => _length;
-  public int GetRoomWidth() => _width;
+  public int GetRoomLength() => Length;
+  public int GetRoomWidth() => Width;
 
   public (float x, float z) GetCurrentLocation()
   {
@@ -75,6 +58,10 @@ public class Room : MonoBehaviour
     {
       reasonText = "Out of time.";
     }
+    else if (reason == "Battery")
+    {
+      reasonText = "The battery has died.";
+    }
     else
     {
       reasonText = "Out of viable moves.";
@@ -92,29 +79,18 @@ public class Room : MonoBehaviour
 
   void Start()
   {
+    //
     ObjectsInRoom = new List<MapLocation>();
-    DrawRoom();
-    Debug.Log(_layout[17, 1]);
+    if (RoomType == RoomType.Preset)
+      ReadContents();
+    else
+      GenerateRoom();
   }
 
   private double GetPercentCovered()
   {
     int numberVisited = ObjectsInRoom.Count(o => o.Visited);
     return (Convert.ToDouble(numberVisited) / _totalPotential) * 100;
-  }
-
-  private void DrawRoom()
-  {
-    for (int i = 0; i < _width; i++)
-    {
-      for (int j = 0; j < _length; j++)
-      {
-        int objectCode = _layout[i, j];
-        Vector3 position = new Vector3(j, 0, i);
-        MapLocation roomObject = DrawObject(objectCode, position);
-        ObjectsInRoom.Add(roomObject);
-      }
-    }
   }
 
   private MapLocation DrawObject(int objectCode, Vector3 position)
@@ -126,9 +102,10 @@ public class Room : MonoBehaviour
       switch (objectCode)
       {
         case 1:
-          // draw wall
-          Instantiate(WallPrefab, position, Quaternion.identity);
-          mapLocation.ObjectType = ObjectType.Wall;
+          // draw tile
+          _totalPotential++;
+          mapLocation.ObjectType = ObjectType.Tile;
+          Instantiate(TilePrefab, position, Quaternion.identity);
           break;
         case 2:
           // draw dirt and tile (since the dirt is in the air, want to see the ground beneath it too)
@@ -149,7 +126,7 @@ public class Room : MonoBehaviour
           mapLocation.ObjectType = ObjectType.Furniture;
           break;
         case 5:
-          // draw tank (and tile since the roomba will move)
+          // draw roomba (and tile since the roomba will move)
           _totalPotential++;
           Instantiate(TilePrefab, position, Quaternion.identity);
 
@@ -160,14 +137,75 @@ public class Room : MonoBehaviour
           mapLocation.ObjectType = ObjectType.Tile;
           break;
         default:
-          // draw tile
-          _totalPotential++;
-          mapLocation.ObjectType = ObjectType.Tile;
-          Instantiate(TilePrefab, position, Quaternion.identity);
+          // draw wall
+          Instantiate(WallPrefab, position, Quaternion.identity);
+          mapLocation.ObjectType = ObjectType.Wall;
           break;
       }
     }
 
     return mapLocation;
+  }
+
+
+  public void ReadContents()
+  {
+    string[] fileContents = File.ReadAllLines(FileName);
+    Length = Convert.ToInt32(fileContents[0]);
+    Width = Convert.ToInt32(fileContents[1]);
+
+    for (int z = Length - 1; z >= 0; z--)
+    {
+      string rowText = fileContents[z + 2]; // offset by 2 because the first two rows have the length/ width
+
+      // Even though we are reading the contents in from the end, we want to render them starting from 0
+      int coordinateZ = Math.Abs(z - Length);
+      string[] row = rowText.Split(',');
+      for (int x = 0; x < Width; x++)
+      {
+        int objectCode = Convert.ToInt32(row[x]);
+        Vector3 position = new Vector3(x, 0, coordinateZ);
+        MapLocation roomObject = DrawObject(objectCode, position);
+        ObjectsInRoom.Add(roomObject);
+      }
+    }
+  }
+
+  private void GenerateRoom()
+  {
+    // Find placement for the Roomba so that we only draw it once.
+    // We don't want it at 0 or Width/ Length since that is where the walls will go.
+    int x = FindRandomNumber(1, Width - 1);
+    int z = FindRandomNumber(1, Length - 1);
+
+    DrawObject(x, z, 5); // Draw roomba first
+    for (int i = 0; i < Width; i++)
+    {
+      for (int j = 0; j < Length; j++)
+      {
+        if (!(x == i && j == z)) // If this isn't the spot chosen for the roomba
+        {
+          int objectCode = ShouldBeWall(i, j) ? 0 : FindRandomNumber(1, 5);
+          DrawObject(i, j, objectCode);
+        }
+      }
+    }
+  }
+
+  private void DrawObject(int x, int z, int objectCode)
+  {
+    Vector3 position = new Vector3(x, 0, z);
+    MapLocation roomObject = DrawObject(objectCode, position);
+    ObjectsInRoom.Add(roomObject);
+  }
+
+  private int FindRandomNumber(int min, int max)
+  {
+    return UnityEngine.Random.Range(min, max);
+  }
+
+  private bool ShouldBeWall(int x, int z)
+  {
+    return x == 0 || x == Width - 1 || z == 0 || z == Length - 1;
   }
 }

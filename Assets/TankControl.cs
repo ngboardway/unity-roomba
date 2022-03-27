@@ -27,7 +27,7 @@ public class TankControl : MonoBehaviour
   private int DirtCount = 0;
 
   private float DirtHealthValue = 0.05f;
-  private float MovementHealthValue = 0.125f;
+  private float MovementHealthValue = 0.0125f;
 
   private bool IsSimulationActive = true;
 
@@ -102,8 +102,12 @@ public class TankControl : MonoBehaviour
   {
     if (collision.gameObject.CompareTag(TagConstants.Obstacle))
     {
-      Debug.Log(collision.gameObject.name);
       Roomba.HandleCollision(collision, rb);
+    }
+    else if(collision.gameObject.CompareTag(TagConstants.InnerObstacle))
+    {
+      Room.EndSimulation("Stuck");
+      IsSimulationActive = false;
     }
   }
 
