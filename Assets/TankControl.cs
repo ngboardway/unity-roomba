@@ -100,14 +100,9 @@ public class TankControl : MonoBehaviour
 
   private void OnCollisionEnter(Collision collision)
   {
-    if (collision.gameObject.CompareTag(TagConstants.Obstacle))
+    if (collision.gameObject.CompareTag(TagConstants.Obstacle) || collision.gameObject.CompareTag(TagConstants.InnerObstacle))
     {
       Roomba.HandleCollision(collision, rb);
-    }
-    else if(collision.gameObject.CompareTag(TagConstants.InnerObstacle))
-    {
-      Room.EndSimulation("Stuck");
-      IsSimulationActive = false;
     }
   }
 

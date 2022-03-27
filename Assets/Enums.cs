@@ -29,6 +29,12 @@ public enum RoomType
   RandomGeneration
 }
 
+public enum PresetRoomOptions
+{
+  SingleRoom,
+  Apartment
+}
+
 public class TagConstants
 {
   public const string Dirt = "Dirt";

@@ -13,7 +13,7 @@ public class Room : MonoBehaviour
   private int _totalPotential = 0;
   private List<MapLocation> ObjectsInRoom;
   private TextMeshProUGUI EndText;
-  private string FileName = "Room3.txt";
+  private string FileName;
 
   public GameObject WallPrefab;
   public GameObject DirtPrefab;
@@ -23,6 +23,7 @@ public class Room : MonoBehaviour
   public GameObject RoombaPrefab;
 
   public RoomType RoomType;
+  public PresetRoomOptions PresetRoomLayout;
   public int Length = 19;
   public int Width = 19;
 
@@ -79,10 +80,15 @@ public class Room : MonoBehaviour
 
   void Start()
   {
-    //
     ObjectsInRoom = new List<MapLocation>();
     if (RoomType == RoomType.Preset)
+    {
+      if (PresetRoomLayout == PresetRoomOptions.SingleRoom)
+        FileName = "Room2.txt";
+      else
+        FileName = "Room3.txt";
       ReadContents();
+    }
     else
       GenerateRoom();
   }

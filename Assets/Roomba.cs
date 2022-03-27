@@ -163,12 +163,9 @@ namespace AssemblyCSharp.Assets
       //Debug.Log(collision.collider.bounds + " " + collision.collider.name + " " + CurrentOrientation);
       bool handleCollision;
 
-
       if (CurrentOrientation == Orientation.Up)
       {
-        Vector3 colliderPosition = new Vector3(collision.transform.position.x, 0, collision.transform.position.z + 0.5f);
-        Bounds colliderBounds = new Bounds(colliderPosition, collision.collider.bounds.size);
-        handleCollision = colliderBounds.Intersects(TopCollider.bounds);
+        handleCollision = collision.collider.bounds.Intersects(TopCollider.bounds);
       }
       else if (CurrentOrientation == Orientation.Right)
       {
@@ -185,8 +182,11 @@ namespace AssemblyCSharp.Assets
 
       if (handleCollision)
       {
-        HandleCollision(rb);
-      }
+        if (collision.gameObject.CompareTag(TagConstants.Obstacle))
+          HandleCollision(rb);
+        else if (collision.gameObject.CompareTag(TagConstants.InnerObstacle))
+          ShouldMove = false;
+      } 
     }
   }
 }

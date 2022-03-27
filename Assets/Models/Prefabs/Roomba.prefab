@@ -488,7 +488,7 @@ MonoBehaviour:
   Speed: 12
   TurnSpeed: 180
   SimulationTime: 1500
-  RoombaPathingType: 1
+  RoombaPathingType: 0
   TopCollider: {fileID: 73773412}
   RightCollider: {fileID: 859449299}
   BottomCollider: {fileID: 1333623669}
