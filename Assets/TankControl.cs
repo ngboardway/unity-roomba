@@ -11,7 +11,6 @@ public class TankControl : MonoBehaviour
   public float Speed = 6f;
   public float TurnSpeed = 180f;
   public float SimulationTime = 315f;
-  public MovementPatterns RoombaPathingType;
 
   public BoxCollider TopCollider;
   public BoxCollider RightCollider;
@@ -31,6 +30,7 @@ public class TankControl : MonoBehaviour
 
   private bool IsSimulationActive = true;
 
+ 
   private Roomba Roomba;
   private Rigidbody rb;
 
@@ -41,9 +41,9 @@ public class TankControl : MonoBehaviour
     DirtCountText = GameObject.FindGameObjectWithTag(TagConstants.TextDirt).GetComponent<TextMeshProUGUI>();
     rb = GetComponent<Rigidbody>();
 
-    if (RoombaPathingType == MovementPatterns.Lawnmower)
+    if (Room.RoombaPathingType == MovementPatterns.Lawnmower)
       Roomba = new LawnMowerRoomba(Room, Speed, TopCollider, RightCollider, BottomCollider, LeftCollider);
-    else if (RoombaPathingType == MovementPatterns.Random)
+    else if (Room.RoombaPathingType == MovementPatterns.Random)
       Roomba = new RandomRoomba(Room, Speed, TopCollider, RightCollider, BottomCollider, LeftCollider);
   }
 
@@ -57,36 +57,6 @@ public class TankControl : MonoBehaviour
     CurrentHealth = StartingHealth;
     SetHealthUI();
   }
-
-  //private void Update()
-  //{
-  //  if (IsSimulationActive)
-  //  {
-  //    SimulationTime -= 1f;
-  //    if (SimulationTime <= 0f)
-  //    {
-  //      Room.EndSimulation("Time");
-  //      IsSimulationActive = false;
-  //    }
-  //    else
-  //    {
-  //      MoveEndConditions moveEndConditions = Roomba.MoveRoomba(transform);
-  //      float movement = (MovementHealthValue * moveEndConditions.MoveCount);
-  //      UpdateHealth(movement);
-  //      if (CurrentHealth <= 0f)
-  //      {
-  //        Room.EndSimulation("Battery");
-  //        IsSimulationActive = false;
-  //      }
-
-  //      if (!moveEndConditions.ShouldMove)
-  //      {
-  //        Room.EndSimulation("Stuck");
-  //        IsSimulationActive = false;
-  //      }
-  //    }
-  //  }
-  //}
 
   private void OnTriggerEnter(Collider other)
   {
@@ -130,6 +100,12 @@ public class TankControl : MonoBehaviour
       }
       else
       {
+        if (Room.SimulationIsComplete())
+        {
+          Room.EndSimulation("Complete");
+          IsSimulationActive = false;
+        }
+
         MoveEndConditions moveEndConditions = Roomba.MoveRoomba(rb);
         float movement = (MovementHealthValue * moveEndConditions.MoveCount);
         UpdateHealth(movement);

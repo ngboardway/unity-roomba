@@ -905,7 +905,7 @@ MonoBehaviour:
   RoombaPrefab: {fileID: 6729520826550929472, guid: 9c26dba7aac6143fd82548c7950456d4,
     type: 3}
   RoomType: 0
-  PresetRoomLayout: 1
+  PresetRoomLayout: 2
   Length: 20
   Width: 10
 --- !u!4 &2072872131

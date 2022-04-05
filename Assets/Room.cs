@@ -24,12 +24,13 @@ public class Room : MonoBehaviour
 
   public RoomType RoomType;
   public PresetRoomOptions PresetRoomLayout;
+  public MovementPatterns RoombaPathingType;
+
   public int Length = 19;
   public int Width = 19;
 
   private float CurrentX;
   private float CurrentZ;
-
 
   public MapLocation GetObjectForCoordinate(float x, float z)
   {
@@ -63,6 +64,10 @@ public class Room : MonoBehaviour
     {
       reasonText = "The battery has died.";
     }
+    else if (reason == "Complete")
+    {
+      reasonText = "Room has been vacuumed";
+    }
     else
     {
       reasonText = "Out of viable moves.";
@@ -70,6 +75,11 @@ public class Room : MonoBehaviour
 
     EndText.text = $"{reasonText}\nVisited {formattedCovered}% of potential tiles.";
     EndText.gameObject.SetActive(true);
+  }
+
+  public bool SimulationIsComplete()
+  {
+    return GetPercentCovered() >= 100;
   }
 
   void Awake()
@@ -85,6 +95,8 @@ public class Room : MonoBehaviour
     {
       if (PresetRoomLayout == PresetRoomOptions.SingleRoom)
         FileName = "Room2.txt";
+      else if (PresetRoomLayout == PresetRoomOptions.Square)
+        FileName = "Room4.txt";
       else
         FileName = "Room3.txt";
       ReadContents();
@@ -165,7 +177,7 @@ public class Room : MonoBehaviour
       string rowText = fileContents[z + 2]; // offset by 2 because the first two rows have the length/ width
 
       // Even though we are reading the contents in from the end, we want to render them starting from 0
-      int coordinateZ = Math.Abs(z - Length);
+      int coordinateZ = Math.Abs(z - Length) - 1;
       string[] row = rowText.Split(',');
       for (int x = 0; x < Width; x++)
       {

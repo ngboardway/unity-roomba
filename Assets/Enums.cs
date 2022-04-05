@@ -32,7 +32,8 @@ public enum RoomType
 public enum PresetRoomOptions
 {
   SingleRoom,
-  Apartment
+  Apartment,
+  Square
 }
 
 public class TagConstants
