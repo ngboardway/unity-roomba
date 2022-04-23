@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 
+/* Mostly from https://learn.unity.com/project/tanks-tutorial */
+
 public class CameraControl : MonoBehaviour
 {
   public float m_DampTime = 0.2f;
   public float m_ScreenEdgeBuffer = 4f;
   public float m_MinSize = 6.5f;
   /*[HideInInspector]*/
-  public Transform[] m_Targets; // targets
+public Transform[] m_Targets; // targets
 
 
   private Camera m_Camera; // needed for controlling the size                       

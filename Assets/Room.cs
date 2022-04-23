@@ -53,6 +53,44 @@ public class Room : MonoBehaviour
     CurrentZ = z;
   }
 
+
+  void Awake()
+  {
+    EndText = GameObject.FindGameObjectWithTag(TagConstants.TextEnd).GetComponent<TextMeshProUGUI>();
+    EndText.gameObject.SetActive(false);
+
+    CommandLineParser parser = new CommandLineParser();
+    parser.ParseCommandLineArguments();
+
+    CommandLineArgs = parser;
+
+    Width = CommandLineArgs.DefaultWidth;
+    Length = CommandLineArgs.DefaultLength;
+    RoomType = CommandLineArgs.RoomType;
+    RoombaPathingType = CommandLineArgs.PathingType;
+    PresetRoomLayout = CommandLineArgs.RoomLayoutType;
+
+    UnityEngine.Random.InitState(CommandLineArgs.Seed);
+  }
+
+  void Start()
+  {
+    UnityEngine.Random.InitState(CommandLineArgs.Seed);
+    ObjectsInRoom = new List<MapLocation>();
+    if (RoomType == RoomType.Preset)
+    {
+      if (PresetRoomLayout == PresetRoomOptions.SingleRoom)
+        FileName = "Room2.txt";
+      else if (PresetRoomLayout == PresetRoomOptions.Square)
+        FileName = "Room4.txt";
+      else
+        FileName = "Room3.txt";
+      ReadContents();
+    }
+    else
+      GenerateRoom();
+  }
+
   public void EndSimulation(string reason, int dirtCollected, float timeTaken, float batteryRemaining)
   {
     double covered = GetPercentCovered();
@@ -102,43 +140,6 @@ public class Room : MonoBehaviour
   public bool SimulationIsComplete()
   {
     return GetPercentCovered() >= 100;
-  }
-
-  void Awake()
-  {
-    EndText = GameObject.FindGameObjectWithTag(TagConstants.TextEnd).GetComponent<TextMeshProUGUI>();
-    EndText.gameObject.SetActive(false);
-
-    CommandLineParser parser = new CommandLineParser();
-    parser.ParseCommandLineArguments();
-
-    CommandLineArgs = parser;
-
-    Width = CommandLineArgs.DefaultWidth;
-    Length = CommandLineArgs.DefaultLength;
-    RoomType = CommandLineArgs.RoomType;
-    RoombaPathingType = CommandLineArgs.PathingType;
-    PresetRoomLayout = CommandLineArgs.RoomLayoutType;
-
-    UnityEngine.Random.InitState(CommandLineArgs.Seed);
-  }
-
-  void Start()
-  {
-    UnityEngine.Random.InitState(CommandLineArgs.Seed);
-    ObjectsInRoom = new List<MapLocation>();
-    if (RoomType == RoomType.Preset)
-    {
-      if (PresetRoomLayout == PresetRoomOptions.SingleRoom)
-        FileName = "Room2.txt";
-      else if (PresetRoomLayout == PresetRoomOptions.Square)
-        FileName = "Room4.txt";
-      else
-        FileName = "Room3.txt";
-      ReadContents();
-    }
-    else
-      GenerateRoom();
   }
 
   private double GetPercentCovered()

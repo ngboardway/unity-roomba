@@ -6,7 +6,9 @@ using UnityEngine;
 using static Room;
 using Random = UnityEngine.Random;
 
-public class TankControl : MonoBehaviour
+/* Adapted from https://learn.unity.com/project/tanks-tutorial */
+
+public class RoombaControl : MonoBehaviour
 {
   public float Speed = 6f;
   public float TurnSpeed = 180f;

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+/* Adapted from https://4experience.co/how-to-start-unity-application-from-command-prompt-with-initial-arguments/ */
 public class CommandLineParser
 {
   #region MEMBERS
