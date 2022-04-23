@@ -35,7 +35,7 @@ namespace AssemblyCSharp.Assets
       LeftCollider = leftCollider;
     }
 
-    public abstract void HandleCollision(Rigidbody rigidbody);
+    public abstract bool HandleCollision(Rigidbody rigidbody);
 
     public MoveEndConditions MoveRoomba(Rigidbody rigidbody)
     {
@@ -65,7 +65,7 @@ namespace AssemblyCSharp.Assets
         MoveCount++;
         // Adjust the position of the tank based on the player's input.
         // Scaled by the amount of input it's receiving
-        Vector3 forward = GetForward();
+        Vector3 forward = GetForward(CurrentOrientation);
         Vector3 movement = forward * Speed * Time.fixedDeltaTime;
         Vector3 newPosition = rigidbody.position + movement;
 
@@ -75,32 +75,38 @@ namespace AssemblyCSharp.Assets
 
         if (x < 0 || x > Room.GetRoomWidth() || z < 0 || z > Room.GetRoomLength())
         {
-          Debug.Log("Not valid at (" + x + "," + z + "). " + Room.GetRoomWidth() + " by " + Room.GetRoomLength());
           ShouldMove = false;
         }
 
         MapLocation location = Room.GetObjectForCoordinate(x, z);
         if (location != null)
+        {
           location.Visited = true;
+
+          if (location.ObjectType == ObjectType.None)
+          {
+            ShouldMove = false;
+          }
+        }
       }
     }
 
-    private Vector3 GetForward()
+    protected Vector3 GetForward(Orientation orientation)
     {
       float x;
       float z;
 
-      if (CurrentOrientation == Orientation.Left)
+      if (orientation == Orientation.Left)
       {
         x = -2f;
         z = 0f;
       }
-      else if (CurrentOrientation == Orientation.Down)
+      else if (orientation == Orientation.Down)
       {
         x = 0f;
         z = -2f;
       }
-      else if (CurrentOrientation == Orientation.Right)
+      else if (orientation == Orientation.Right)
       {
         x = 2f;
         z = 0f;
@@ -160,7 +166,6 @@ namespace AssemblyCSharp.Assets
 
     public void HandleCollision(Collision collision, Rigidbody rb)
     {
-      //Debug.Log(collision.collider.bounds + " " + collision.collider.name + " " + CurrentOrientation);
       bool handleCollision;
 
       if (CurrentOrientation == Orientation.Up)
@@ -183,10 +188,10 @@ namespace AssemblyCSharp.Assets
       if (handleCollision)
       {
         if (collision.gameObject.CompareTag(TagConstants.Obstacle))
-          HandleCollision(rb);
-        else if (collision.gameObject.CompareTag(TagConstants.InnerObstacle))
-          ShouldMove = false;
-      } 
+        {
+          ShouldMove = HandleCollision(rb);
+        }
+      }
     }
   }
 }

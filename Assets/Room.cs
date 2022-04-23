@@ -10,10 +10,12 @@ using UnityEngine.UI;
 
 public class Room : MonoBehaviour
 {
+  private const string LogPath = "RoombaResults.csv";
   private int _totalPotential = 0;
   private List<MapLocation> ObjectsInRoom;
   private TextMeshProUGUI EndText;
   private string FileName;
+  private CommandLineParser CommandLineArgs;
 
   public GameObject WallPrefab;
   public GameObject DirtPrefab;
@@ -51,7 +53,7 @@ public class Room : MonoBehaviour
     CurrentZ = z;
   }
 
-  public void EndSimulation(string reason)
+  public void EndSimulation(string reason, int dirtCollected, float timeTaken, float batteryRemaining)
   {
     double covered = GetPercentCovered();
     string formattedCovered = covered.ToString("N2");
@@ -75,6 +77,26 @@ public class Room : MonoBehaviour
 
     EndText.text = $"{reasonText}\nVisited {formattedCovered}% of potential tiles.";
     EndText.gameObject.SetActive(true);
+
+    ProcessEndOfSimulation(reason, formattedCovered, dirtCollected, timeTaken,batteryRemaining);
+    Application.Quit();
+  }
+
+  private void ProcessEndOfSimulation(string reason, string boardCovered, int dirtCollected, float timeTaken, float batteryRemaining)
+  {
+    string percentDirtCollected = GetDirtCollected(dirtCollected);
+    
+    string endText = $"{CommandLineArgs.Seed},{CommandLineArgs.RoomType},{CommandLineArgs.RoomLayoutType},{CommandLineArgs.PathingType},{reason},{boardCovered},{percentDirtCollected},{timeTaken},{batteryRemaining.ToString("N2")}";
+
+    File.AppendAllLines(LogPath, new List<string> { endText });
+  }
+
+  private string GetDirtCollected(int dirtCollected)
+  {
+    int totalDirtOnBoard = ObjectsInRoom.Count(o => o.ObjectType == ObjectType.Dirt);
+    double percentCollected =  (Convert.ToDouble(dirtCollected) / totalDirtOnBoard) * 100;
+
+    return percentCollected.ToString("N2");
   }
 
   public bool SimulationIsComplete()
@@ -86,10 +108,24 @@ public class Room : MonoBehaviour
   {
     EndText = GameObject.FindGameObjectWithTag(TagConstants.TextEnd).GetComponent<TextMeshProUGUI>();
     EndText.gameObject.SetActive(false);
+
+    CommandLineParser parser = new CommandLineParser();
+    parser.ParseCommandLineArguments();
+
+    CommandLineArgs = parser;
+
+    Width = CommandLineArgs.DefaultWidth;
+    Length = CommandLineArgs.DefaultLength;
+    RoomType = CommandLineArgs.RoomType;
+    RoombaPathingType = CommandLineArgs.PathingType;
+    PresetRoomLayout = CommandLineArgs.RoomLayoutType;
+
+    UnityEngine.Random.InitState(CommandLineArgs.Seed);
   }
 
   void Start()
   {
+    UnityEngine.Random.InitState(CommandLineArgs.Seed);
     ObjectsInRoom = new List<MapLocation>();
     if (RoomType == RoomType.Preset)
     {

@@ -15,7 +15,13 @@ namespace AssemblyCSharp
     }
 
 
-    public override void HandleCollision(Rigidbody rb)
+    public override bool HandleCollision(Rigidbody rb)
+    {
+      Collide(rb);
+      return true;
+    }
+
+    private void Collide(Rigidbody rb)
     {
       if (CurrentOrientation == Orientation.Up)
         TurnOrientation = Orientation.Left;

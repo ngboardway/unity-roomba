@@ -906,6 +906,7 @@ MonoBehaviour:
     type: 3}
   RoomType: 0
   PresetRoomLayout: 2
+  RoombaPathingType: 1
   Length: 20
   Width: 10
 --- !u!4 &2072872131

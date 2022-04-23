@@ -10,7 +10,7 @@ public class TankControl : MonoBehaviour
 {
   public float Speed = 6f;
   public float TurnSpeed = 180f;
-  public float SimulationTime = 315f;
+  public float SimulationTimeTotal = 315f;
 
   public BoxCollider TopCollider;
   public BoxCollider RightCollider;
@@ -26,11 +26,11 @@ public class TankControl : MonoBehaviour
   private int DirtCount = 0;
 
   private float DirtHealthValue = 0.05f;
-  private float MovementHealthValue = 0.0125f;
+  private float MovementHealthValue = 0.0925f;
 
   private bool IsSimulationActive = true;
+  private float SimulationTimeRemaining;
 
- 
   private Roomba Roomba;
   private Rigidbody rb;
 
@@ -45,11 +45,8 @@ public class TankControl : MonoBehaviour
       Roomba = new LawnMowerRoomba(Room, Speed, TopCollider, RightCollider, BottomCollider, LeftCollider);
     else if (Room.RoombaPathingType == MovementPatterns.Random)
       Roomba = new RandomRoomba(Room, Speed, TopCollider, RightCollider, BottomCollider, LeftCollider);
-  }
 
-  private void Start()
-  {
-    Random.InitState(54);
+    SimulationTimeRemaining = SimulationTimeTotal;
   }
 
   private void OnEnable()
@@ -92,17 +89,17 @@ public class TankControl : MonoBehaviour
   {
     if (IsSimulationActive)
     {
-      SimulationTime -= 1f;
-      if (SimulationTime <= 0f)
+      SimulationTimeRemaining -= 1f;
+      if (SimulationTimeRemaining <= 0f)
       {
-        Room.EndSimulation("Time");
+        EndSimulation("Time");
         IsSimulationActive = false;
       }
       else
       {
         if (Room.SimulationIsComplete())
         {
-          Room.EndSimulation("Complete");
+          EndSimulation("Complete");
           IsSimulationActive = false;
         }
 
@@ -111,17 +108,24 @@ public class TankControl : MonoBehaviour
         UpdateHealth(movement);
         if (CurrentHealth <= 0f)
         {
-          Room.EndSimulation("Battery");
+          EndSimulation("Battery");
           IsSimulationActive = false;
         }
 
         if (!moveEndConditions.ShouldMove)
         {
-          Room.EndSimulation("Stuck");
+          EndSimulation("Stuck");
           IsSimulationActive = false;
         }
       }
     }
   }
 
+  private void EndSimulation(string reason)
+  {
+    float timeTaken = SimulationTimeTotal - SimulationTimeRemaining;
+
+    Room.EndSimulation(reason, DirtCount, timeTaken, CurrentHealth);
+    IsSimulationActive = false;
+  }
 }
