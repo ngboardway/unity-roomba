@@ -106,6 +106,7 @@ public class TankControl : MonoBehaviour
         MoveEndConditions moveEndConditions = Roomba.MoveRoomba(rb);
         float movement = (MovementHealthValue * moveEndConditions.MoveCount);
         UpdateHealth(movement);
+
         if (CurrentHealth <= 0f)
         {
           EndSimulation("Battery");
