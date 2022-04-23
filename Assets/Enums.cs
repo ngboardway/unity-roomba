@@ -1,9 +1,9 @@
 ﻿public enum Orientation
 {
-  Left,
-  Right,
-  Up,
-  Down
+  Left = 1,
+  Right = 2,
+  Up = 3,
+  Down = 4
 }
 
 public enum ObjectType
@@ -17,6 +17,25 @@ public enum ObjectType
   Roomba
 }
 
+public enum MovementPatterns
+{
+  Lawnmower,
+  Random
+}
+
+public enum RoomType
+{
+  Preset,
+  RandomGeneration
+}
+
+public enum PresetRoomOptions
+{
+  SingleRoom,
+  Apartment,
+  Square
+}
+
 public class TagConstants
 {
   public const string Dirt = "Dirt";
@@ -25,4 +44,5 @@ public class TagConstants
   public const string TextEnd = "Text - Stuck";
   public const string Obstacle = "Obstacle";
   public const string Room = "Room";
+  public const string InnerObstacle = "InnerObstacle";
 }

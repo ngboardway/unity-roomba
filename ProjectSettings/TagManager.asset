@@ -12,6 +12,7 @@ TagManager:
   - Text - Stuck
   - Text - Dirt
   - Text - Health
+  - InnerObstacle
   layers:
   - Default
   - TransparentFX
