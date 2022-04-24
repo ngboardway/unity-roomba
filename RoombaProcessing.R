@@ -85,3 +85,13 @@ pt<-ggplot(results, aes(x=room_layout_type, y = time_taken, fill=pathing_type)) 
   labs(title = "Time Taken") +
   scale_x_discrete(limits = c('Square', 'SingleRoom', 'Apartment'))
 pt
+
+# Bar Chart for Reason Simulation Ended
+sim_ended = ggplot(data = results, aes(x = pathing_type, fill=reason_simulation_ended)) + 
+  geom_bar(position="stack") + 
+  facet_grid(~ room_layout_type)  +
+  xlab("Pathing Type") +
+  ylab("Count") +
+  guides(fill = guide_legend(title = "Reason Simulation Ended")) +
+  labs(title = "Why Did the Simulation End?") 
+sim_ended
