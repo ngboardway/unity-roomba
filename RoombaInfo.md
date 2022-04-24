@@ -1,4 +1,4 @@
-# Exploring the Effectiveness of a Robt Vacuum (Roomba)
+# Exploring the Effectiveness of a Robot Vacuum (Roomba)
 
 ## Details of the Simulation
 Over the last year I created a simulation of a robot vacuum moving through an area. 
@@ -42,5 +42,7 @@ When the Roomba collides with an obstacle,it picks a new direction at random in 
 ## Results
 ![Board Covered](DataGathering/BoardCovered.png)
 ![Dirt Collected](DataGathering/DirtCollected.png)
+
+
 ![Time Taken](DataGathering/TimeTaken.png)
 ![Battery Remaining](DataGathering/BatteryRemaining.png)
